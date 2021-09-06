@@ -26,11 +26,11 @@ public class PlayerState_Grounded : State
     }
 
     public override void Enter() {
-        // player.playerInputActions.Player.Jump += DoJump;
+        player.playerInputActions.Player.Jump.performed += DoJump;
     }
     
     public override void Exit() {
-        // player.playerInputActions.Player.Jump -= DoJump;
+        player.playerInputActions.Player.Jump.performed -= DoJump;
     }
 
     public override string GetName() {

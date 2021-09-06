@@ -27,11 +27,12 @@ public class Player : MonoBehaviour
     void OnEnable() {
         movement = playerInputActions.Player.Movement;
         movement.Enable();
-        playerInputActions.Player.Jump += DoJump;
+        playerInputActions.Player.Jump.Enable();
     }
 
     void OnDisable() {
         movement.Disable();
+        playerInputActions.Player.Jump.Disable();
     }
 
     void Start()
@@ -52,11 +53,6 @@ public class Player : MonoBehaviour
     void OnGUI()
     {
         stateMachine.OnGUI();
-    }
-
-
-    private void DoJump(InputAction.CallbackContext context) {
-        Debug.Log("DoJump");
     }
 
     protected virtual State GetInitialState()
