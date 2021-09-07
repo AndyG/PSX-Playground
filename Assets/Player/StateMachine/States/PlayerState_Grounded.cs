@@ -15,11 +15,11 @@ public class PlayerState_Grounded : State
     }
 
     public override void Update() {
-        player = stateMachine.player;
+        DoCameraMove();
         Vector2 inputDir = player.movement.ReadValue<Vector2>();
         player.velocity.x = inputDir.x * player.moveSpeed;
         player.velocity.z = inputDir.y * player.moveSpeed;
-        player.velocity.y = -1f;
+        player.velocity.y = -0.5f;
         player.characterController.Move(player.velocity * Time.deltaTime);
 
         if (!player.characterController.isGrounded) {
@@ -44,5 +44,9 @@ public class PlayerState_Grounded : State
         player.velocity.y = player.jumpForce;
         player.characterController.Move(player.velocity * Time.deltaTime);
         stateMachine.ChangeState(stateMachine.airborneState);
+    }
+
+    private void DoCameraMove() {
+        Vector2 inputDir = player.cameraMovement.ReadValue<Vector2>();
     }
 }

@@ -20,6 +20,9 @@ public class Player : MonoBehaviour
     public PlayerInputActions playerInputActions;
     [HideInInspector]
     public InputAction movement;
+    [HideInInspector]
+    public InputAction cameraMovement;
+
     public PlayerStateMachine stateMachine;
 
     [HideInInspector]
@@ -34,11 +37,17 @@ public class Player : MonoBehaviour
     void OnEnable() {
         movement = playerInputActions.Player.Movement;
         movement.Enable();
+
+        cameraMovement = playerInputActions.Player.CameraMovement;
+        cameraMovement.Enable();
+
         playerInputActions.Player.Jump.Enable();
+
     }
 
     void OnDisable() {
         movement.Disable();
+        cameraMovement.Disable();
         playerInputActions.Player.Jump.Disable();
     }
 
