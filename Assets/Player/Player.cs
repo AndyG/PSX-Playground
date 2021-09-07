@@ -7,9 +7,6 @@ public class Player : MonoBehaviour
 {
     [Header("Movement")]
     public float moveSpeed = 10f;
-    public float turnSpeed = 1f;
-    public float minTurnAngle = -90.0f;
-    public float maxTurnAngle = 90.0f;
     public float gravity = 0.1f;
     public float jumpForce = 10f;
     public float airborneMovementScalar = 0.3f;
@@ -76,6 +73,22 @@ public class Player : MonoBehaviour
 
     public float GetCameraFacing() {
         return camera.transform.eulerAngles.y;
+    }
+
+    public void LookAtDirection(Vector3 direction, bool parallelToGround = true) {
+        Quaternion rotation; 
+        if (parallelToGround) {
+            rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(direction, Vector3.up));
+        } else {
+            rotation = Quaternion.LookRotation(direction);
+        }
+        transform.rotation = rotation;
+    }
+
+    public Vector3 ConvertRelativeInputDirectionToWorldSpace(Vector2 inputDirection) {
+        Vector3 inputDirectionRelative = new Vector3(inputDirection.x, 0, inputDirection.y);
+        Vector3 inputDirectionWorld = Quaternion.Euler(0, GetCameraFacing(), 0) * inputDirectionRelative;
+        return inputDirectionWorld;
     }
 
     protected virtual State GetInitialState()
