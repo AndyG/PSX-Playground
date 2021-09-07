@@ -272,12 +272,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 10
-  turnSpeed: 1
-  minTurnAngle: -90
-  maxTurnAngle: 90
   gravity: 0.25
-  jumpForce: 0.15
-  airborneMovementScalar: 0.7
+  jumpForce: 0.1
+  airborneMovementScalar: 0.4
   velocity: {x: 0, y: -1, z: 0}
   movement:
     m_Name: Movement
@@ -287,4 +284,14 @@ MonoBehaviour:
     m_Processors: 
     m_Interactions: 
     m_SingletonActionBindings: []
+  cameraMovement:
+    m_Name: 
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
   characterController: {fileID: 6632585279661190141}
+  freeLookUserInput: {fileID: 0}
+  camera: {fileID: 0}
