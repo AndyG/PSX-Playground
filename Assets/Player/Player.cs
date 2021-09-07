@@ -31,13 +31,15 @@ public class Player : MonoBehaviour
     [SerializeField]
     private new Camera camera;
 
-    void Awake() {
+    void Awake()
+    {
         playerInputActions = new PlayerInputActions();
         characterController = GetComponent<CharacterController>();
         stateMachine = new PlayerStateMachine(this);
     }
 
-    void OnEnable() {
+    void OnEnable()
+    {
         movement = playerInputActions.Player.Movement;
         movement.Enable();
 
@@ -48,7 +50,8 @@ public class Player : MonoBehaviour
 
     }
 
-    void OnDisable() {
+    void OnDisable()
+    {
         movement.Disable();
         cameraMovement.Disable();
         playerInputActions.Player.Jump.Disable();
@@ -71,21 +74,27 @@ public class Player : MonoBehaviour
         stateMachine.OnGUI();
     }
 
-    public float GetCameraFacing() {
+    public float GetCameraFacing()
+    {
         return camera.transform.eulerAngles.y;
     }
 
-    public void LookAtDirection(Vector3 direction, bool parallelToGround = true) {
-        Quaternion rotation; 
-        if (parallelToGround) {
+    public void LookAtDirection(Vector3 direction, bool parallelToGround = true)
+    {
+        Quaternion rotation;
+        if (parallelToGround)
+        {
             rotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(direction, Vector3.up));
-        } else {
+        }
+        else
+        {
             rotation = Quaternion.LookRotation(direction);
         }
         transform.rotation = rotation;
     }
 
-    public Vector3 ConvertRelativeInputDirectionToWorldSpace(Vector2 inputDirection) {
+    public Vector3 ConvertRelativeInputDirectionToWorldSpace(Vector2 inputDirection)
+    {
         Vector3 inputDirectionRelative = new Vector3(inputDirection.x, 0, inputDirection.y);
         Vector3 inputDirectionWorld = Quaternion.Euler(0, GetCameraFacing(), 0) * inputDirectionRelative;
         return inputDirectionWorld;

@@ -7,13 +7,16 @@ public class PlayerState_Airborne : State
     private Player player;
     private PlayerStateMachine stateMachine;
 
-    public PlayerState_Airborne(PlayerStateMachine stateMachine) {
+    public PlayerState_Airborne(PlayerStateMachine stateMachine)
+    {
         this.stateMachine = stateMachine;
         this.player = stateMachine.player;
     }
 
-    public override void Update() {
-        if (player.characterController.isGrounded) {
+    public override void Update()
+    {
+        if (player.characterController.isGrounded)
+        {
             stateMachine.ChangeState(stateMachine.groundedState);
             return;
         }
@@ -28,12 +31,14 @@ public class PlayerState_Airborne : State
 
         player.characterController.Move(player.velocity);
 
-        if (player.velocity.x != 0 || player.velocity.z != 0) {
+        if (player.velocity.x != 0 || player.velocity.z != 0)
+        {
             player.LookAtDirection(player.velocity);
         }
     }
 
-    public override string GetName() {
+    public override string GetName()
+    {
         return "Airborne";
     }
 }

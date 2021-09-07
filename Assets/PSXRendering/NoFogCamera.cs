@@ -7,15 +7,18 @@ public class NoFogCamera : MonoBehaviour
 
     private bool doesSceneHaveFog;
 
-    void Start() {
+    void Start()
+    {
         doesSceneHaveFog = RenderSettings.fog;
     }
 
-    void OnPreRender() {
+    void OnPreRender()
+    {
         RenderSettings.fog = false;
     }
 
-    void OnPostRender() {
+    void OnPostRender()
+    {
         RenderSettings.fog = doesSceneHaveFog;
     }
 }

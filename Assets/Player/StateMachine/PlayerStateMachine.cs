@@ -17,11 +17,13 @@ public class PlayerStateMachine : StateMachine
         airborneState = new PlayerState_Airborne(this);
     }
 
-    protected override State GetInitialState() {
+    protected override State GetInitialState()
+    {
         return groundedState;
     }
 
-    protected override void OnStateChanged(State oldState, State newState) {
+    protected override void OnStateChanged(State oldState, State newState)
+    {
         Debug.Log("State change: " + oldState.GetName() + " to " + newState.GetName());
     }
 }
