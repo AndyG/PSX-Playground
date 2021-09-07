@@ -26,12 +26,12 @@ public class PlayerState_Grounded : State
         player.velocity.y = 0f;
         player.velocity.z = velocity.z;
 
+        player.characterController.Move(player.velocity * Time.deltaTime + Vector3.down);
+
         if (player.velocity.x != 0 || player.velocity.z != 0) {
             Quaternion rotation = Quaternion.LookRotation(player.velocity);
             player.transform.rotation = rotation;
         }
-
-        player.characterController.Move(player.velocity * Time.deltaTime + Vector3.down);
 
         if (!player.characterController.isGrounded) {
             player.velocity.y = 0f;
