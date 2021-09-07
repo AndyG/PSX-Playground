@@ -5,13 +5,20 @@ using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
+    [Header("Movement")]
     public float moveSpeed = 10f;
     public float turnSpeed = 1f;
     public float minTurnAngle = -90.0f;
     public float maxTurnAngle = 90.0f;
-    public float gravity = 1f;
+    public float gravity = 0.1f;
+    public float jumpForce = 10f;
+    public float airborneMovementScalar = 0.3f;
+
+    [Header("Movement State")]
+    public Vector3 velocity = new Vector3(0, 0, 0);
 
     public PlayerInputActions playerInputActions;
+    [HideInInspector]
     public InputAction movement;
     public PlayerStateMachine stateMachine;
 
@@ -43,11 +50,6 @@ public class Player : MonoBehaviour
     void Update()
     {
         stateMachine.Update();
-    }
-
-    void LateUpdate()
-    {
-        stateMachine.LateUpdate();
     }
 
     void OnGUI()

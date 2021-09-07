@@ -18,13 +18,9 @@ public class StateMachine
         currentState.Update();
     }
 
-    public void LateUpdate()
-    {
-        currentState.FixedUpdate();
-    }
-
     public void ChangeState(State newState)
     {
+        OnStateChanged(currentState, newState);
         currentState.Exit();
         currentState = newState;
         currentState.Enter();
@@ -39,5 +35,9 @@ public class StateMachine
     protected virtual State GetInitialState()
     {
         return null;
+    }
+
+    protected virtual void OnStateChanged(State oldState, State newState) {
+
     }
 }

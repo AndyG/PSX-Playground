@@ -20,4 +20,8 @@ public class PlayerStateMachine : StateMachine
     protected override State GetInitialState() {
         return groundedState;
     }
+
+    protected override void OnStateChanged(State oldState, State newState) {
+        Debug.Log("State change: " + oldState.GetName() + " to " + newState.GetName());
+    }
 }

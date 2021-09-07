@@ -13,12 +13,17 @@ public class PlayerState_Airborne : State
     }
 
     public override void Update() {
-        Vector3 moveVector = new Vector3(0, 0, 0);
-        moveVector.y = -player.gravity;
-        player.characterController.Move(moveVector * Time.deltaTime);
         if (player.characterController.isGrounded) {
             stateMachine.ChangeState(stateMachine.groundedState);
+            return;
         }
+
+        Vector2 inputDir = player.movement.ReadValue<Vector2>();
+        Vector2 scaledMovementVector = inputDir * player.airborneMovementScalar * player.moveSpeed;
+        player.velocity.x = scaledMovementVector.x * Time.deltaTime;
+        player.velocity.z = scaledMovementVector.y * Time.deltaTime;
+        player.velocity.y -= player.gravity * Time.deltaTime;
+        player.characterController.Move(player.velocity);
     }
 
     public override string GetName() {

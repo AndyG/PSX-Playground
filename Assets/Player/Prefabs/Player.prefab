@@ -67,16 +67,19 @@ MonoBehaviour:
   turnSpeed: 1
   minTurnAngle: -90
   maxTurnAngle: 90
-  gravity: 10
+  gravity: 0.25
+  jumpForce: 0.15
+  airborneMovementScalar: 0.7
+  velocity: {x: 0, y: -1, z: 0}
   movement:
     m_Name: Movement
-    m_Type: 0
-    m_ExpectedControlType: 
-    m_Id: 89d155d7-ac59-4e70-994f-db8a5a3577d3
+    m_Type: 1
+    m_ExpectedControlType: Button
+    m_Id: 3984c463-b706-4def-a34a-07a86e0c318f
     m_Processors: 
     m_Interactions: 
     m_SingletonActionBindings: []
-  characterController: {fileID: 0}
+  characterController: {fileID: 6632585279661190141}
 --- !u!1 &6632585279888405424
 GameObject:
   m_ObjectHideFlags: 0
