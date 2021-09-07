@@ -15,12 +15,23 @@ public class PlayerState_Grounded : State
     }
 
     public override void Update() {
-        DoCameraMove();
         Vector2 inputDir = player.movement.ReadValue<Vector2>();
-        player.velocity.x = inputDir.x * player.moveSpeed;
-        player.velocity.z = inputDir.y * player.moveSpeed;
-        player.velocity.y = -0.5f;
-        player.characterController.Move(player.velocity * Time.deltaTime);
+
+        float cameraFacing = player.GetCameraFacing();
+        Vector3 desiredMoveDirectionLocal = new Vector3(inputDir.x, 0, inputDir.y);
+        Vector3 desiredMoveDirectionGlobal = Quaternion.Euler(0, cameraFacing, 0) * desiredMoveDirectionLocal;
+
+        Vector3 velocity = desiredMoveDirectionGlobal * player.moveSpeed;
+        player.velocity.x = velocity.x;
+        player.velocity.y = 0f;
+        player.velocity.z = velocity.z;
+
+        if (player.velocity.x != 0 || player.velocity.z != 0) {
+            Quaternion rotation = Quaternion.LookRotation(player.velocity);
+            player.transform.rotation = rotation;
+        }
+
+        player.characterController.Move(player.velocity * Time.deltaTime + Vector3.down);
 
         if (!player.characterController.isGrounded) {
             player.velocity.y = 0f;
@@ -44,9 +55,5 @@ public class PlayerState_Grounded : State
         player.velocity.y = player.jumpForce;
         player.characterController.Move(player.velocity * Time.deltaTime);
         stateMachine.ChangeState(stateMachine.airborneState);
-    }
-
-    private void DoCameraMove() {
-        Vector2 inputDir = player.cameraMovement.ReadValue<Vector2>();
     }
 }

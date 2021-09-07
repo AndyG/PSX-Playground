@@ -28,6 +28,12 @@ public class Player : MonoBehaviour
     [HideInInspector]
     public CharacterController characterController;
 
+    [SerializeField]
+    private FreeLookUserInput freeLookUserInput;
+
+    [SerializeField]
+    private new Camera camera;
+
     void Awake() {
         playerInputActions = new PlayerInputActions();
         characterController = GetComponent<CharacterController>();
@@ -59,11 +65,17 @@ public class Player : MonoBehaviour
     void Update()
     {
         stateMachine.Update();
+        Vector2 inputDir = cameraMovement.ReadValue<Vector2>();
+        freeLookUserInput.OnUserMovedCamera(inputDir);
     }
 
     void OnGUI()
     {
         stateMachine.OnGUI();
+    }
+
+    public float GetCameraFacing() {
+        return camera.transform.eulerAngles.y;
     }
 
     protected virtual State GetInitialState()
