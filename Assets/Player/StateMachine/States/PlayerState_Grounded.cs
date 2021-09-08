@@ -62,11 +62,10 @@ public class PlayerState_Grounded : State
     private void AlignHeading()
     {
         Vector3? maybeGroundNormal = player.groundNormalDetector.GetGroundNormal();
-        if (maybeGroundNormal.HasValue)
-        {
-            Vector3 groundNormal = maybeGroundNormal.Value;
-            if (player.velocity.magnitude > 0.01f)
+        if (player.velocity.magnitude > 0.01f)
+            if (maybeGroundNormal.HasValue)
             {
+                Vector3 groundNormal = maybeGroundNormal.Value;
                 //Make sure the velocity is normalized
                 Vector3 vel = player.velocity.normalized;
                 //Project the two vectors using the dot product
@@ -76,17 +75,7 @@ public class PlayerState_Grounded : State
             }
             else
             {
-                //Make sure the velocity is normalized
-                Vector3 vel = player.transform.forward;
-                //Project the two vectors using the dot product
-                Vector3 forward = vel - groundNormal * Vector3.Dot(vel, groundNormal);
-                //Set the rotation with relative forward and up axes
-                player.transform.rotation = Quaternion.LookRotation(forward.normalized, groundNormal);
+                player.transform.rotation = Quaternion.LookRotation(player.velocity.normalized, Vector3.up);
             }
-        }
-        else if (player.velocity.magnitude > 0.01f)
-        {
-            player.transform.rotation = Quaternion.LookRotation(player.velocity.normalized, Vector3.up);
-        }
     }
 }
