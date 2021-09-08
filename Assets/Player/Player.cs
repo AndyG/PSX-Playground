@@ -31,11 +31,15 @@ public class Player : MonoBehaviour
     [SerializeField]
     private new Camera camera;
 
+    [HideInInspector]
+    public GroundNormalDetector groundNormalDetector;
+
     void Awake()
     {
         playerInputActions = new PlayerInputActions();
         characterController = GetComponent<CharacterController>();
         stateMachine = new PlayerStateMachine(this);
+        groundNormalDetector = GetComponentInChildren<GroundNormalDetector>();
     }
 
     void OnEnable()
