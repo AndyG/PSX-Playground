@@ -22,19 +22,12 @@ public class PlayerState_Airborne : State
         }
 
         Vector2 inputDir = player.movement.ReadValue<Vector2>();
-        Vector3 desiredMoveDirectionGlobal = player.ConvertRelativeInputDirectionToWorldSpace(inputDir);
+        float degsToRotate = inputDir.x * player.spinRate * Time.deltaTime;
+        player.transform.Rotate(new Vector3(0, degsToRotate, 0), Space.Self);
 
-        Vector3 velocity = desiredMoveDirectionGlobal * player.moveSpeed * player.airborneMovementScalar;
-        player.velocity.x = velocity.x * Time.deltaTime;
+        // apply gravity
         player.velocity.y -= player.gravity * Time.deltaTime;
-        player.velocity.z = velocity.z * Time.deltaTime;
-
-        player.characterController.Move(player.velocity);
-
-        if (player.velocity.x != 0 || player.velocity.z != 0)
-        {
-            player.LookAtDirection(player.velocity);
-        }
+        player.characterController.Move(player.velocity * Time.deltaTime);
     }
 
     public override string GetName()

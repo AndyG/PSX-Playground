@@ -18,14 +18,24 @@ public class PlayerState_Grounded : State
     public override void Update()
     {
         Vector2 inputDir = player.movement.ReadValue<Vector2>();
-        Vector3 desiredMoveDirectionGlobal = player.ConvertRelativeInputDirectionToWorldSpace(inputDir);
+        // turn player
+        Vector3 playerEulerAngles = player.transform.eulerAngles;
+        playerEulerAngles.y += inputDir.x * player.turnRate * Time.deltaTime;
+        player.transform.eulerAngles = playerEulerAngles;
 
-        Vector3 velocity = desiredMoveDirectionGlobal * player.moveSpeed;
+        bool isHoldingBack = inputDir.y < -0.5f;
+        if (isHoldingBack)
+        {
+            return;
+        }
+
+        Vector3 velocity = player.transform.forward * player.moveSpeed;
         player.velocity.x = velocity.x;
         player.velocity.y = 0f;
         player.velocity.z = velocity.z;
 
-        player.characterController.Move(player.velocity * Time.deltaTime + Vector3.down);
+        Vector3 movement = velocity * Time.deltaTime + Vector3.down; // add gravity
+        player.characterController.Move(movement);
 
         if (!player.characterController.isGrounded)
         {
@@ -67,7 +77,7 @@ public class PlayerState_Grounded : State
             {
                 Vector3 groundNormal = maybeGroundNormal.Value;
                 //Make sure the velocity is normalized
-                Vector3 vel = player.velocity.normalized;
+                Vector3 vel = player.transform.forward.normalized;
                 //Project the two vectors using the dot product
                 Vector3 forward = vel - groundNormal * Vector3.Dot(vel, groundNormal);
                 //Set the rotation with relative forward and up axes

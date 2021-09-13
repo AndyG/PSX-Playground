@@ -10,6 +10,8 @@ public class Player : MonoBehaviour
     public float gravity = 0.1f;
     public float jumpForce = 10f;
     public float airborneMovementScalar = 0.3f;
+    public int turnRate = 180; // deg/sec
+    public int spinRate = 360; // deg/sec
 
     [Header("Movement State")]
     public Vector3 velocity = new Vector3(0, 0, 0);
@@ -28,9 +30,6 @@ public class Player : MonoBehaviour
     [SerializeField]
     private FreeLookUserInput freeLookUserInput;
 
-    [SerializeField]
-    private new Camera camera;
-
     [HideInInspector]
     public GroundNormalDetector groundNormalDetector;
 
@@ -47,9 +46,6 @@ public class Player : MonoBehaviour
         movement = playerInputActions.Player.Movement;
         movement.Enable();
 
-        cameraMovement = playerInputActions.Player.CameraMovement;
-        cameraMovement.Enable();
-
         playerInputActions.Player.Jump.Enable();
 
     }
@@ -57,7 +53,6 @@ public class Player : MonoBehaviour
     void OnDisable()
     {
         movement.Disable();
-        cameraMovement.Disable();
         playerInputActions.Player.Jump.Disable();
     }
 
@@ -69,18 +64,11 @@ public class Player : MonoBehaviour
     void Update()
     {
         stateMachine.Update();
-        Vector2 inputDir = cameraMovement.ReadValue<Vector2>();
-        freeLookUserInput.OnUserMovedCamera(inputDir);
     }
 
     void OnGUI()
     {
         stateMachine.OnGUI();
-    }
-
-    public float GetCameraFacing()
-    {
-        return camera.transform.eulerAngles.y;
     }
 
     public void LookAtDirection(Vector3 direction, bool parallelToGround = true)
@@ -95,13 +83,6 @@ public class Player : MonoBehaviour
             rotation = Quaternion.LookRotation(direction);
         }
         transform.rotation = rotation;
-    }
-
-    public Vector3 ConvertRelativeInputDirectionToWorldSpace(Vector2 inputDirection)
-    {
-        Vector3 inputDirectionRelative = new Vector3(inputDirection.x, 0, inputDirection.y);
-        Vector3 inputDirectionWorld = Quaternion.Euler(0, GetCameraFacing(), 0) * inputDirectionRelative;
-        return inputDirectionWorld;
     }
 
     protected virtual State GetInitialState()
