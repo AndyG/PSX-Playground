@@ -17,7 +17,7 @@ public class GroundNormalDetector : MonoBehaviour
     public Vector3? GetGroundNormal()
     {
         RaycastHit raycastHit;
-        Vector3 direction = transform.TransformDirection(Vector3.down);
+        Vector3 direction = -transform.up;
         Ray ray = new Ray(transform.position, direction);
         Debug.DrawRay(ray.origin, ray.direction * rayDistance, Color.green);
 

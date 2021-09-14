@@ -6,6 +6,7 @@ public class PlayerStateMachine : StateMachine
 {
     public PlayerState_Grounded groundedState;
     public PlayerState_Airborne airborneState;
+    public PlayerState_Wipeout wipeoutState;
 
     [HideInInspector]
     public Player player;
@@ -15,15 +16,19 @@ public class PlayerStateMachine : StateMachine
         this.player = player;
         groundedState = new PlayerState_Grounded(this);
         airborneState = new PlayerState_Airborne(this);
+        wipeoutState = new PlayerState_Wipeout(this);
     }
 
     protected override State GetInitialState()
     {
-        return groundedState;
+        return airborneState;
     }
 
     protected override void OnStateChanged(State oldState, State newState)
     {
-        Debug.Log("State change: " + oldState.GetName() + " to " + newState.GetName());
+        if (oldState != null)
+        {
+            Debug.Log("State change: " + oldState.GetName() + " to " + newState.GetName());
+        }
     }
 }

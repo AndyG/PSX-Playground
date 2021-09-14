@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class StateMachine
 {
-    State currentState;
+    public State currentState;
 
     public void Start()
     {
@@ -28,8 +28,8 @@ public class StateMachine
 
     public void OnGUI()
     {
-        string content = currentState != null ? currentState.GetName() : "(no current state)";
-        GUILayout.Label($"<color='black'><size=40>{content}</size></color>");
+        // string content = currentState != null ? currentState.GetName() : "(no current state)";
+        // GUILayout.Label($"<color='black'><size=40>{content}</size></color>");
     }
 
     protected virtual State GetInitialState()
@@ -37,7 +37,8 @@ public class StateMachine
         return null;
     }
 
-    protected virtual void OnStateChanged(State oldState, State newState) {
+    protected virtual void OnStateChanged(State oldState, State newState)
+    {
 
     }
 }

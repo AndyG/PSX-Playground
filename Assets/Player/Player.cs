@@ -13,6 +13,9 @@ public class Player : MonoBehaviour
     public int turnRate = 180; // deg/sec
     public int spinRate = 360; // deg/sec
 
+    [Header("Stats")]
+    public float wipeoutAngleThreshold = 45f;
+
     [Header("Movement State")]
     public Vector3 velocity = new Vector3(0, 0, 0);
 
@@ -32,6 +35,15 @@ public class Player : MonoBehaviour
 
     [HideInInspector]
     public GroundNormalDetector groundNormalDetector;
+
+    [SerializeField]
+    public GameObject body;
+
+    [SerializeField]
+    public GameObject head;
+
+    [SerializeField]
+    public GameObject playerPrefab;
 
     void Awake()
     {
@@ -88,5 +100,10 @@ public class Player : MonoBehaviour
     protected virtual State GetInitialState()
     {
         return null;
+    }
+
+    public PlayerStateMachine GetStateMachine()
+    {
+        return stateMachine;
     }
 }
