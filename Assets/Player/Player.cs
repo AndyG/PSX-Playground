@@ -8,7 +8,9 @@ public class Player : MonoBehaviour
     [Header("Movement")]
     public float moveSpeed = 10f;
     public float gravity = 0.1f;
-    public float jumpForce = 10f;
+    public float minJumpForce = 3f;
+    public float maxJumpForce = 10f;
+    public float timeToMaxJump = 1f;
     public float airborneMovementScalar = 0.3f;
     public int turnRate = 180; // deg/sec
     public int spinRate = 360; // deg/sec
@@ -45,6 +47,12 @@ public class Player : MonoBehaviour
     [SerializeField]
     public GameObject playerPrefab;
 
+    [SerializeField]
+    public GrindableDetector grindableDetector;
+
+    public Grindable curGrindable = null;
+    public Transform grindTarget = null;
+
     void Awake()
     {
         playerInputActions = new PlayerInputActions();
@@ -59,13 +67,14 @@ public class Player : MonoBehaviour
         movement.Enable();
 
         playerInputActions.Player.Jump.Enable();
-
+        playerInputActions.Player.Grind.Enable();
     }
 
     void OnDisable()
     {
         movement.Disable();
         playerInputActions.Player.Jump.Disable();
+        playerInputActions.Player.Grind.Disable();
     }
 
     void Start()

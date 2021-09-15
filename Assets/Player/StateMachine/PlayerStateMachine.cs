@@ -7,6 +7,7 @@ public class PlayerStateMachine : StateMachine
     public PlayerState_Grounded groundedState;
     public PlayerState_Airborne airborneState;
     public PlayerState_Wipeout wipeoutState;
+    public PlayerState_Grinding grindingState;
 
     [HideInInspector]
     public Player player;
@@ -17,6 +18,7 @@ public class PlayerStateMachine : StateMachine
         groundedState = new PlayerState_Grounded(this);
         airborneState = new PlayerState_Airborne(this);
         wipeoutState = new PlayerState_Wipeout(this);
+        grindingState = new PlayerState_Grinding(this);
     }
 
     protected override State GetInitialState()

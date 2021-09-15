@@ -28,6 +28,14 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "Grind",
+                    "type": "Button",
+                    "id": "eaec9bfc-28ea-4125-b30d-af9603dde68f",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -127,6 +135,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "CameraMovement",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "34e4a52b-bcaa-4a26-9d8d-22fec13d7082",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Grind",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -9,6 +9,9 @@ public class PlayerState_Grounded : State
     private Player player;
     private PlayerStateMachine stateMachine;
 
+    private bool isCrouched = false;
+    private float timeSpentCrouched = 0f;
+
     public PlayerState_Grounded(PlayerStateMachine stateMachine)
     {
         this.stateMachine = stateMachine;
@@ -17,6 +20,11 @@ public class PlayerState_Grounded : State
 
     public override void Update()
     {
+        if (isCrouched)
+        {
+            timeSpentCrouched += Time.deltaTime;
+        }
+
         Vector2 inputDir = player.movement.ReadValue<Vector2>();
         // turn player
         Vector3 playerEulerAngles = player.transform.eulerAngles;
@@ -49,12 +57,24 @@ public class PlayerState_Grounded : State
 
     public override void Enter()
     {
-        player.playerInputActions.Player.Jump.performed += DoJump;
+        ResetState();
+
+        player.playerInputActions.Player.Jump.started += StartCrouch;
+        player.playerInputActions.Player.Jump.canceled += OnCrouchRelease;
+
+        InputActionPhase jumpPhase = player.playerInputActions.Player.Jump.phase;
+        if (jumpPhase == InputActionPhase.Started || jumpPhase == InputActionPhase.Performed)
+        {
+            StartCrouch();
+        }
     }
 
     public override void Exit()
     {
-        player.playerInputActions.Player.Jump.performed -= DoJump;
+        ResetState();
+
+        player.playerInputActions.Player.Jump.started -= StartCrouch;
+        player.playerInputActions.Player.Jump.canceled -= OnCrouchRelease;
     }
 
     public override string GetName()
@@ -62,11 +82,30 @@ public class PlayerState_Grounded : State
         return "Grounded";
     }
 
-    private void DoJump(InputAction.CallbackContext context)
+    private void StartCrouch(InputAction.CallbackContext context)
     {
-        player.velocity.y = player.jumpForce;
+        StartCrouch();
+    }
+
+    private void StartCrouch()
+    {
+        isCrouched = true;
+    }
+
+    private void OnCrouchRelease(InputAction.CallbackContext context)
+    {
+        Debug.Log("time spent crouched: " + timeSpentCrouched);
+        float fraction = Mathf.Min(timeSpentCrouched / player.timeToMaxJump, 1f);
+        Debug.Log("fraction: " + fraction);
+        player.velocity.y = Mathf.Max(player.minJumpForce, player.maxJumpForce * fraction);
         player.characterController.Move(player.velocity * Time.deltaTime);
         stateMachine.ChangeState(stateMachine.airborneState);
+    }
+
+    private void ResetState()
+    {
+        isCrouched = false;
+        timeSpentCrouched = 0f;
     }
 
     private void AlignHeading()

@@ -22,7 +22,6 @@ public class PlayerState_Wipeout : State
 
     public override void Enter()
     {
-        Debug.Log("Enter!!!");
         player.playerInputActions.Player.Jump.performed += DoReset;
 
         Rigidbody headRigidBody = player.head.GetComponent<Rigidbody>();
@@ -49,8 +48,6 @@ public class PlayerState_Wipeout : State
 
     private void DoReset(InputAction.CallbackContext context)
     {
-        Debug.Log("old player velocity: " + player.velocity);
-
         PlayerSpawner spawner = GameObject.FindObjectOfType<PlayerSpawner>();
         spawner.transform.position = player.transform.position + Vector3.up * 5f;
         Vector3 playerWorldVelocity = player.velocity;
