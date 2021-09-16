@@ -9,4 +9,10 @@ public class Grindable : MonoBehaviour
 
     [SerializeField]
     public Transform pointB;
+
+    public GrindableGroup GetGroup()
+    {
+        GrindableGroup group = transform.parent.GetComponent<GrindableGroup>();
+        return group;
+    }
 }

@@ -14,6 +14,8 @@ public class Player : MonoBehaviour
     public float airborneMovementScalar = 0.3f;
     public int turnRate = 180; // deg/sec
     public int spinRate = 360; // deg/sec
+    [Range(0, 90)]
+    public int leaveGrindOllieDegrees = 45;
 
     [Header("Stats")]
     public float wipeoutAngleThreshold = 45f;

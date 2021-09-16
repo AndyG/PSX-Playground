@@ -94,11 +94,8 @@ public class PlayerState_Grounded : State
 
     private void OnCrouchRelease(InputAction.CallbackContext context)
     {
-        Debug.Log("time spent crouched: " + timeSpentCrouched);
         float fraction = Mathf.Min(timeSpentCrouched / player.timeToMaxJump, 1f);
-        Debug.Log("fraction: " + fraction);
         player.velocity.y = Mathf.Max(player.minJumpForce, player.maxJumpForce * fraction);
-        player.characterController.Move(player.velocity * Time.deltaTime);
         stateMachine.ChangeState(stateMachine.airborneState);
     }
 

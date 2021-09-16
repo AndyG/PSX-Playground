@@ -8,8 +8,6 @@ public class PlayerState_Airborne : State
     private Player player;
     private PlayerStateMachine stateMachine;
 
-    private bool isLookingForGrind = false;
-
     public PlayerState_Airborne(PlayerStateMachine stateMachine)
     {
         this.stateMachine = stateMachine;
@@ -18,7 +16,7 @@ public class PlayerState_Airborne : State
 
     public override void Update()
     {
-        if (player.characterController.isGrounded)
+        if (player.characterController.isGrounded && player.velocity.y <= 0)
         {
             if (LandingShouldWipeout())
             {
@@ -34,7 +32,7 @@ public class PlayerState_Airborne : State
             }
         }
 
-        if (isLookingForGrind)
+        if (player.playerInputActions.Player.Grind.IsPressed())
         {
             Grindable grindable = player.grindableDetector.GetGrindable();
             if (grindable != null)
@@ -57,30 +55,6 @@ public class PlayerState_Airborne : State
     public override string GetName()
     {
         return "Airborne";
-    }
-
-    public override void Enter()
-    {
-        isLookingForGrind = false;
-        player.playerInputActions.Player.Grind.started += OnGrindButtonPressed;
-        player.playerInputActions.Player.Grind.canceled += OnGrindButtonReleased;
-    }
-
-    public override void Exit()
-    {
-        isLookingForGrind = false;
-        player.playerInputActions.Player.Grind.started -= OnGrindButtonPressed;
-        player.playerInputActions.Player.Grind.canceled -= OnGrindButtonReleased;
-    }
-
-    private void OnGrindButtonPressed(InputAction.CallbackContext context)
-    {
-        isLookingForGrind = true;
-    }
-
-    private void OnGrindButtonReleased(InputAction.CallbackContext context)
-    {
-        isLookingForGrind = false;
     }
 
     private bool LandingShouldWipeout()

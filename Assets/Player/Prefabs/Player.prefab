@@ -443,7 +443,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b0a38dc8399f1c4aae4298f2ad91362, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 0.51
+  radius: 1.13
   grindableLayerMask:
     serializedVersion: 2
     m_Bits: 64
@@ -514,12 +514,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 30
   gravity: 150
-  minJumpForce: 30
-  maxJumpForce: 55
-  timeToMaxJump: 1
+  minJumpForce: 40
+  maxJumpForce: 65
+  timeToMaxJump: 0.15
   airborneMovementScalar: 1
   turnRate: 210
   spinRate: 540
+  leaveGrindOllieDegrees: 45
   wipeoutAngleThreshold: 45
   velocity: {x: 0, y: 0, z: 0}
   movement:
@@ -530,6 +531,7 @@ MonoBehaviour:
     m_Processors: 
     m_Interactions: 
     m_SingletonActionBindings: []
+    m_Flags: 0
   cameraMovement:
     m_Name: 
     m_Type: 0
@@ -538,6 +540,7 @@ MonoBehaviour:
     m_Processors: 
     m_Interactions: 
     m_SingletonActionBindings: []
+    m_Flags: 0
   characterController: {fileID: 6632585279661190141}
   freeLookUserInput: {fileID: 0}
   groundNormalDetector: {fileID: 0}

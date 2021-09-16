@@ -10,8 +10,9 @@
                     "type": "Button",
                     "id": "3984c463-b706-4def-a34a-07a86e0c318f",
                     "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": ""
+                    "processors": "AxisDeadzone",
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Jump",
@@ -19,7 +20,8 @@
                     "id": "de4a023d-b89c-4fbf-bae6-5c5f92b2026d",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "CameraMovement",
@@ -27,7 +29,8 @@
                     "id": "c625c492-cda0-4592-9030-fee2ce0e853c",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Grind",
@@ -35,7 +38,8 @@
                     "id": "eaec9bfc-28ea-4125-b30d-af9603dde68f",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
