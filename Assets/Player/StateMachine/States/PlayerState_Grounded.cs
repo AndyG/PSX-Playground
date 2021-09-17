@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerState_Grounded : State
 {
+    public const string NAME = "Grounded";
     private Player player;
     private PlayerStateMachine stateMachine;
 
@@ -79,7 +80,7 @@ public class PlayerState_Grounded : State
 
     public override string GetName()
     {
-        return "Grounded";
+        return NAME;
     }
 
     private void StartCrouch(InputAction.CallbackContext context)
