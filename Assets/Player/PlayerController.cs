@@ -32,21 +32,13 @@ public class PlayerController : MonoBehaviour
         Debug.Log("movement y: " + movement.y);
         if (!IsGrounded())
         {
-            // prioritize local
-            float distanceToGround = DistanceToGround(Mathf.Abs(movement.y));
-            if (movement.y < 0f && distanceToGround != -1 && distanceToGround < Mathf.Abs(movement.y))
-            {
-                // is this right? seems wrong
-                movement.y = -distanceToGround;
-            }
-            else if (movement.y < 0f)
+            if (movement.y < 0f)
             {
                 float distanceToGroundWorld = DistanceToGroundWorld(5f);
-                Debug.Log("distance to ground world: " + distanceToGroundWorld);
                 if (distanceToGroundWorld != -1 && distanceToGroundWorld < Mathf.Abs(movement.y))
                 {
                     movement.y = -distanceToGroundWorld;
-                    shouldWipeOut = true;
+                    shouldWipeOut = LandingShouldWipeout(movement);
                 }
             }
         }
@@ -85,7 +77,22 @@ public class PlayerController : MonoBehaviour
 
     public bool IsGrounded()
     {
-        return DistanceToGround(0.01f) != -1f || DistanceToGroundWorld(0.01f) != -1f;
+        if (DistanceToGround(0.01f) != -1f)
+        {
+            Vector3? groundNormal = GetGroundNormal();
+            if (groundNormal.HasValue)
+            {
+                return Vector3.Dot(groundNormal.Value, Vector3.up) != 0;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return DistanceToGroundWorld(0.01f) != -1f;
+        }
     }
 
     private RaycastHit? CheckGround(Transform groundCheckPosition)
@@ -188,5 +195,41 @@ public class PlayerController : MonoBehaviour
         Vector3 newForward = Vector3.Cross(newUp, left);
         Quaternion newRotation = Quaternion.LookRotation(newForward, newUp);
         player.transform.rotation = newRotation;
+    }
+
+    private bool LandingShouldWipeout(Vector3 movement)
+    {
+        Vector3? groundNormal = player.playerController.GetGroundNormal();
+        if (!groundNormal.HasValue)
+        {
+            return true;
+        }
+
+        Vector3 velocityRelativeToGround = Vector3.ProjectOnPlane(movement, groundNormal.Value);
+        if (velocityRelativeToGround.magnitude < 3f)
+        {
+            return false;
+        }
+
+        // this is hack -- if player is straight up and the ground normal is horizontal-ish, don't wipe out
+        bool isUpright = player.transform.up.y > 0.8f;
+        bool isGroundNormalHorizontal = groundNormal.Value.y < 0.6;
+        if (isUpright && isGroundNormalHorizontal)
+        {
+            Debug.Log("not wiping out");
+            return false;
+        }
+        else
+        {
+            Debug.Log("was upright: " + isUpright + " ground normal y: " + groundNormal.Value.y);
+        }
+
+        Quaternion velocityOrientation = Quaternion.LookRotation(velocityRelativeToGround, groundNormal.Value);
+        Quaternion playerRotation = player.transform.rotation;
+
+        float similarity = Quaternion.Dot(velocityOrientation, playerRotation);
+        float oppositeSimilarity = Quaternion.Dot(velocityOrientation, playerRotation * Quaternion.Euler(0, 180, 0));
+        Debug.Log("checking similarity");
+        return Mathf.Max(Mathf.Abs(similarity), Mathf.Abs(oppositeSimilarity)) < 0.9f;
     }
 }
