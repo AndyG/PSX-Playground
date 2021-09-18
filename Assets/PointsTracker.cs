@@ -29,6 +29,35 @@ public class PointsTracker : MonoBehaviour
         }
     }
 
+    public void HandleStateChange(State current) {
+        string currentState = current.GetName();
+        if (currentState != PlayerState_Wipeout.NAME) {
+                switch (lastState) {
+                    case PlayerState_Grinding.NAME:
+                        comboScore += pointsPerGrindSecond * (int)(Time.time - stateStartTime);
+                        break;
+                    case PlayerState_Airborne.NAME:
+                        comboScore += pointsPerAerial180 * (int)Mathf.Abs(totalRotation / 180);
+                        totalRotation = 0;
+                        break;
+                }
+        } else {
+            totalRotation = 0;
+            airRotation = 0;
+            comboScore = 0;
+            comboScoreUI.text = "0";
+        }
+        stateStartTime = Time.time;
+        trickTextUI.text = "";
+        if (currentState == PlayerState_Grinding.NAME) {
+            trickTextUI.text = "now grinding";
+        }
+        if (currentState == PlayerState_Airborne.NAME) {
+            trickTextUI.text = "now airborne";
+            lastRotation = player.transform.rotation;
+        }
+    }
+
     public void TrackPlayer(Player player) {
         this.playerStateMachine = player.stateMachine;
         this.player = player;
@@ -46,42 +75,21 @@ public class PointsTracker : MonoBehaviour
         if (playerStateMachine == null) {
             return;
         }
-        string currentState = playerStateMachine.currentState.GetName();
-        if (currentState == PlayerState_Grounded.NAME) {
-            if (Time.time - stateStartTime > comboTimeWindow) {
-                totalScore += comboScore;
-                comboScore = 0;
-                totalScoreUI.text = totalScore.ToString();
-                comboScoreUI.text = "0";
-            }
-        }
+        State current = playerStateMachine.currentState;
+        string currentState = current.GetName();
         if (currentState != lastState) {
-            Debug.Log("CHANGE " + currentState + " " + lastState);
-            if (currentState != PlayerState_Wipeout.NAME) {
-                switch (lastState) {
-                    case PlayerState_Grinding.NAME:
-                        comboScore += pointsPerGrindSecond * (int)(Time.time - stateStartTime);
-                        break;
-                    case PlayerState_Airborne.NAME:
-                        comboScore += pointsPerAerial180 * (int)Mathf.Abs(totalRotation / 180);
-                        totalRotation = 0;
-                        break;
-                }
-            } else {
-                comboScore = 0;
-                comboScoreUI.text = "0";
-            }
-            stateStartTime = Time.time;
-            trickTextUI.text = "";
-            if (currentState == PlayerState_Grinding.NAME) {
-                trickTextUI.text = "now grinding";
-            }
-            if (currentState == PlayerState_Airborne.NAME) {
-                trickTextUI.text = "now airborne";
-                lastRotation = player.transform.rotation;
-            }
+            HandleStateChange(current);
+            lastState = currentState;
         }
         switch (currentState) {
+            case PlayerState_Grounded.NAME:
+                if (Time.time - stateStartTime > comboTimeWindow) {
+                    totalScore += comboScore;
+                    comboScore = 0;
+                    totalScoreUI.text = totalScore.ToString();
+                    comboScoreUI.text = "0";
+                }
+                break;
             case PlayerState_Airborne.NAME:
                 Quaternion delta = lastRotation * Quaternion.Inverse(player.transform.rotation);
                 totalRotation += delta.eulerAngles.y;
@@ -94,6 +102,5 @@ public class PointsTracker : MonoBehaviour
                 comboScoreUI.text = (comboScore + ((int)(pointsPerGrindSecond * (Time.time - stateStartTime)))).ToString();
                 break;
         }
-        lastState = currentState;
     }
 }
