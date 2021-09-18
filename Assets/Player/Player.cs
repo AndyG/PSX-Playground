@@ -6,7 +6,8 @@ using UnityEngine.InputSystem;
 public class Player : MonoBehaviour
 {
     [Header("Movement")]
-    public float moveSpeed = 10f;
+    public float moveSpeed = 5f;
+    public float crouchedSpeed = 10f;
     public float gravity = 0.1f;
     public float minJumpForce = 3f;
     public float maxJumpForce = 10f;

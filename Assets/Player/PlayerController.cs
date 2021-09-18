@@ -17,47 +17,38 @@ public class PlayerController : MonoBehaviour
     private Player player;
     private Collider playerCollider;
 
-    private PlayerDirectionalCollisions playerDirectionalCollisions;
-
     private CharacterController characterController;
 
     public void Start()
     {
         player = GetComponent<Player>();
         playerCollider = player.GetComponent<CapsuleCollider>();
-        playerDirectionalCollisions = GetComponent<PlayerDirectionalCollisions>();
     }
 
-    public void Move(Vector3 movement)
+    // return true if should wipe out
+    public bool Move(Vector3 movement)
     {
+        bool shouldWipeOut = false;
+        Debug.Log("movement y: " + movement.y);
         if (!IsGrounded())
         {
             // prioritize local
             float distanceToGround = DistanceToGround(Mathf.Abs(movement.y));
             if (movement.y < 0f && distanceToGround != -1 && distanceToGround < Mathf.Abs(movement.y))
             {
+                // is this right? seems wrong
                 movement.y = -distanceToGround;
             }
             else if (movement.y < 0f)
             {
                 float distanceToGroundWorld = DistanceToGroundWorld(5f);
+                Debug.Log("distance to ground world: " + distanceToGroundWorld);
                 if (distanceToGroundWorld != -1 && distanceToGroundWorld < Mathf.Abs(movement.y))
                 {
-                    bool isMovingIntoGround = distanceToGround < Mathf.Abs(movement.y);
-                    movement.y = -distanceToGround - skinWidth;
-                    Vector3? groundNormal = GetGroundNormalWorld();
-                    if (groundNormal.HasValue)
-                    {
-                        AlignHeadingWithGroundNormal(groundNormal.Value);
-                    }
+                    movement.y = -distanceToGroundWorld;
+                    shouldWipeOut = true;
                 }
             }
-        }
-
-        float distanceToCollider = playerDirectionalCollisions.GetDistanceToCollider(movement);
-        if (distanceToCollider > 0)
-        {
-            movement = Vector3.ClampMagnitude(movement, distanceToCollider);
         }
 
         transform.position += movement;
@@ -71,7 +62,6 @@ public class PlayerController : MonoBehaviour
             bool shouldCorrect = Physics.ComputePenetration(playerCollider, transform.position, transform.rotation, terrainCollider, terrainCollider.transform.position, terrainCollider.transform.rotation, out penetrationCorrectionDirection, out penetrationCorrectionDistance);
             if (shouldCorrect)
             {
-                transform.position += penetrationCorrectionDirection * penetrationCorrectionDistance;
                 Vector3? groundNormal = GetGroundNormal();
                 if (groundNormal.HasValue)
                 {
@@ -85,10 +75,12 @@ public class PlayerController : MonoBehaviour
                         AlignHeadingWithGroundNormal(groundNormal.Value);
                     }
                 }
+
+                transform.position += penetrationCorrectionDirection * penetrationCorrectionDistance;
             }
         }
 
-        DrawDistanceToGroundWorldDebugRay(5f);
+        return shouldWipeOut;
     }
 
     public bool IsGrounded()
@@ -150,24 +142,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void DrawDistanceToGroundWorldDebugRay(float maxDistance)
-    {
-        Vector3 direction = Vector3.down;
-        Vector3 castOrigin = transform.position - transform.up;
-
-        Ray ray = new Ray(castOrigin, direction);
-        Debug.DrawRay(ray.origin, (ray.direction * (maxDistance)), Color.cyan);
-    }
-
     private float DistanceToGroundWorld(float maxDistance)
     {
         Vector3 direction = Vector3.down;
-        Vector3 castOrigin = transform.position - transform.up;
+        Vector3 castOrigin = (transform.position - (transform.up * 0.5f)) + Vector3.down * 0.5f;
 
-        RaycastHit raycastHit;
-        if (Physics.Raycast(castOrigin, Vector3.down, out raycastHit, maxDistance, terrainLayerMask))
+        Debug.DrawRay(castOrigin, Vector3.down, Color.blue, maxDistance);
+        RaycastHit hit;
+        if (Physics.Raycast(castOrigin, Vector3.down, out hit, maxDistance, terrainLayerMask))
         {
-            return raycastHit.distance;
+            return hit.distance;
         }
         else
         {
@@ -177,15 +161,21 @@ public class PlayerController : MonoBehaviour
 
     private Vector3? GetGroundNormalWorld()
     {
-        Vector3 castOrigin = transform.position - transform.up + Vector3.up * 0.2f;
-        float maxDistance = 0.21f;
+        Vector3 direction = Vector3.down;
+        Vector3 castOrigin = (transform.position - transform.up) + Vector3.up * 0.5f;
+
+        float maxDistance = 5;
+        Debug.DrawRay(castOrigin, Vector3.down, Color.cyan, maxDistance);
+
         RaycastHit hit;
         if (Physics.Raycast(castOrigin, Vector3.down, out hit, maxDistance, terrainLayerMask))
         {
+            Debug.Log("found hit normal");
             return hit.normal;
         }
         else
         {
+            Debug.Log("did not find normal");
             return null;
         }
     }

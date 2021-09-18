@@ -41,7 +41,8 @@ public class PlayerState_Grounded : State
             return;
         }
 
-        Vector3 desiredVelocity = player.transform.forward.normalized * player.moveSpeed;
+        float speed = isCrouched ? player.crouchedSpeed : player.moveSpeed;
+        Vector3 desiredVelocity = player.transform.forward.normalized * speed;
         player.velocity = desiredVelocity;
 
         player.playerController.Move(player.velocity * Time.deltaTime);

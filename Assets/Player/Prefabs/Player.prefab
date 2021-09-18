@@ -441,7 +441,6 @@ GameObject:
   - component: {fileID: 6632585279661190138}
   - component: {fileID: 6632585279661190139}
   - component: {fileID: 3411916623115009408}
-  - component: {fileID: -5459646044705270227}
   - component: {fileID: 2107783787881275162}
   m_Layer: 3
   m_Name: Player
@@ -480,7 +479,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4bf013cdc3f25d4b8d6191fcfa84216, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 50
+  moveSpeed: 30
+  crouchedSpeed: 50
   gravity: 75
   minJumpForce: 40
   maxJumpForce: 65
@@ -540,24 +540,6 @@ MonoBehaviour:
   groundCheckerFront: {fileID: 5240114936831726443}
   groundCheckerBack: {fileID: 0}
   groundCheckerSphere: {fileID: 8274771391987550332}
---- !u!114 &-5459646044705270227
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6632585279661190136}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 771109e6cab19d4419a47a9805bedb8b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  numRays: 5
-  layerMask:
-    serializedVersion: 2
-    m_Bits: 1
-  bottomCutoff: 0.45
-  topCutoff: 0.45
 --- !u!136 &2107783787881275162
 CapsuleCollider:
   m_ObjectHideFlags: 0

@@ -50,7 +50,12 @@ public class PlayerState_Airborne : State
 
         // apply gravity
         player.velocity.y -= player.gravity * Time.deltaTime;
-        player.playerController.Move(player.velocity * Time.deltaTime);
+        bool shouldWipeOut = player.playerController.Move(player.velocity * Time.deltaTime);
+        if (shouldWipeOut)
+        {
+            stateMachine.ChangeState(stateMachine.wipeoutState);
+            return;
+        }
     }
 
     public override string GetName()
