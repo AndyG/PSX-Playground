@@ -15,10 +15,17 @@ public class PlayerController : MonoBehaviour
     public Transform groundCheckerSphere;
 
     private Player player;
+    private Collider playerCollider;
+
+    private PlayerDirectionalCollisions playerDirectionalCollisions;
+
+    private CharacterController characterController;
 
     public void Start()
     {
         player = GetComponent<Player>();
+        playerCollider = player.GetComponent<CapsuleCollider>();
+        playerDirectionalCollisions = GetComponent<PlayerDirectionalCollisions>();
     }
 
     public void Move(Vector3 movement)
@@ -47,19 +54,37 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        float distanceToCollider = playerDirectionalCollisions.GetDistanceToCollider(movement);
+        if (distanceToCollider > 0)
+        {
+            movement = Vector3.ClampMagnitude(movement, distanceToCollider);
+        }
+
         transform.position += movement;
 
-        // check if in ground
-        RaycastHit hit;
-        bool isInGround = Physics.Raycast(transform.position, -transform.up, out hit, 1.1f, terrainLayerMask);
-        if (isInGround)
+        // overlapping colliders
+        Collider[] overlappingColliders = Physics.OverlapCapsule(transform.position - transform.up * 0.5f, transform.position + transform.up * 0.5f, 0.5f, terrainLayerMask);
+        Vector3 penetrationCorrectionDirection;
+        float penetrationCorrectionDistance;
+        foreach (Collider terrainCollider in overlappingColliders)
         {
-            float distance = hit.distance;
-            if (distance < 1)
+            bool shouldCorrect = Physics.ComputePenetration(playerCollider, transform.position, transform.rotation, terrainCollider, terrainCollider.transform.position, terrainCollider.transform.rotation, out penetrationCorrectionDirection, out penetrationCorrectionDistance);
+            if (shouldCorrect)
             {
-                float difference = 1f - distance;
-                Vector3 translation = difference * transform.up;
-                transform.position += translation;
+                transform.position += penetrationCorrectionDirection * penetrationCorrectionDistance;
+                Vector3? groundNormal = GetGroundNormal();
+                if (groundNormal.HasValue)
+                {
+                    AlignHeadingWithGroundNormal(groundNormal.Value);
+                }
+                else
+                {
+                    Vector3? groundNormalWorld = GetGroundNormalWorld();
+                    if (groundNormal.HasValue)
+                    {
+                        AlignHeadingWithGroundNormal(groundNormal.Value);
+                    }
+                }
             }
         }
 

@@ -92,17 +92,5 @@ public class PlayerState_Airborne : State
         float oppositeSimilarity = Quaternion.Dot(velocityOrientation, playerRotation * Quaternion.Euler(0, 180, 0));
         Debug.Log("checking similarity");
         return Mathf.Max(Mathf.Abs(similarity), Mathf.Abs(oppositeSimilarity)) < 0.9f;
-        // float oppositeLookAngleDeg = lookAngle.eulerAngles.y + 180;
-        // if (oppositeLookAngleDeg > 360)
-        // {
-        //     oppositeLookAngleDeg = oppositeLookAngleDeg - 360;
-        // }
-        // Quaternion oppositeLookAngle = Quaternion.Euler(0, oppositeLookAngleDeg, 0);
-
-        // float angleForward = Mathf.Abs(Quaternion.Angle(lookAngle, velocityOrientation));
-        // float angleBackward = Mathf.Abs(Quaternion.Angle(oppositeLookAngle, velocityOrientation));
-
-        // return angleForward > player.wipeoutAngleThreshold && angleBackward > player.wipeoutAngleThreshold
-        // && angleForward < (180 - player.wipeoutAngleThreshold) && angleBackward < (180 - player.wipeoutAngleThreshold);
     }
 }
