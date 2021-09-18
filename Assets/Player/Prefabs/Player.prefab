@@ -58,7 +58,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 858401703}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.9, z: 0}
+  m_LocalPosition: {x: 0, y: -0.115, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6632585279661190138}
@@ -76,10 +76,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8a792b135d88fe41b6b942848478a35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rayDistance: 0.7
+  rayDistance: 1.35
   layerMask:
     serializedVersion: 2
     m_Bits: 1
+  display: 1
 --- !u!1 &1420558139
 GameObject:
   m_ObjectHideFlags: 0
@@ -336,7 +337,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5244149720506333684
 Transform:
   m_ObjectHideFlags: 0
@@ -495,7 +496,7 @@ CharacterController:
   serializedVersion: 2
   m_Height: 2
   m_Radius: 0.5
-  m_SlopeLimit: 90
+  m_SlopeLimit: 180
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
@@ -521,6 +522,7 @@ MonoBehaviour:
   turnRate: 210
   spinRate: 540
   leaveGrindOllieDegrees: 45
+  alignWithGroundNormal: 1
   wipeoutAngleThreshold: 45
   velocity: {x: 0, y: 0, z: 0}
   movement:

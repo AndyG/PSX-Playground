@@ -11,6 +11,9 @@ public class GroundNormalDetector : MonoBehaviour
     [SerializeField]
     private LayerMask layerMask;
 
+    [SerializeField]
+    private bool display = false;
+
     private Vector3? lastNormal = null;
 
     // Update is called once per frame
@@ -34,10 +37,20 @@ public class GroundNormalDetector : MonoBehaviour
         }
     }
 
+    void OnDrawGizmosSelected()
+    {
+        // Display the explosion radius when selected
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawRay(this.transform.position, -this.transform.up * rayDistance);
+    }
+
     private void OnGUI()
     {
-        string lastNormalString = lastNormal.HasValue ? lastNormal.Value.ToString() : "null";
-        string content = "\nGround Normal: " + lastNormalString;
-        GUILayout.Label($"<color='black'><size=40>{content}</size></color>");
+        if (display)
+        {
+            string lastNormalString = lastNormal.HasValue ? lastNormal.Value.ToString() : "null";
+            string content = "\nGround Normal: " + lastNormalString;
+            GUILayout.Label($"<color='black'><size=40>{content}</size></color>");
+        }
     }
 }

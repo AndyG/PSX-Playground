@@ -17,10 +17,13 @@ public class Player : MonoBehaviour
     [Range(0, 90)]
     public int leaveGrindOllieDegrees = 45;
 
+    public bool alignWithGroundNormal = false;
+
     [Header("Stats")]
     public float wipeoutAngleThreshold = 45f;
 
     [Header("Movement State")]
+    [SerializeField]
     public Vector3 velocity = new Vector3(0, 0, 0);
 
     public PlayerInputActions playerInputActions;

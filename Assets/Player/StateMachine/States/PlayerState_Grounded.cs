@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -25,11 +26,13 @@ public class PlayerState_Grounded : State
             timeSpentCrouched += Time.deltaTime;
         }
 
-        Vector2 inputDir = player.movement.ReadValue<Vector2>();
         // turn player
-        Vector3 playerEulerAngles = player.transform.eulerAngles;
-        playerEulerAngles.y += inputDir.x * player.turnRate * Time.deltaTime;
-        player.transform.eulerAngles = playerEulerAngles;
+        Vector2 inputDir = player.movement.ReadValue<Vector2>();
+        if (Mathf.Abs(inputDir.x) > 0.1)
+        {
+            float rotationAmount = player.turnRate * Math.Sign(inputDir.x) * Time.deltaTime;
+            player.transform.Rotate(Vector3.up * rotationAmount, Space.Self);
+        }
 
         bool isHoldingBack = inputDir.y < -0.5f;
         if (isHoldingBack)
@@ -37,22 +40,21 @@ public class PlayerState_Grounded : State
             return;
         }
 
-        Vector3 velocity = player.transform.forward * player.moveSpeed;
-        player.velocity.x = velocity.x;
-        player.velocity.y = 0f;
-        player.velocity.z = velocity.z;
+        Vector3 desiredVelocity = player.transform.forward.normalized * player.moveSpeed;
+        player.velocity = desiredVelocity;
 
-        Vector3 movement = velocity * Time.deltaTime + Vector3.down; // add gravity
-        player.characterController.Move(movement);
+        player.characterController.Move(player.velocity * Time.deltaTime);
+
+        AlignHeadingWithGroundNormal();
+
+        Vector3 groundStickVector = -player.transform.up * 0.01f;
+        player.characterController.Move(groundStickVector);
 
         if (!player.characterController.isGrounded)
         {
-            player.velocity.y = 0f;
             stateMachine.ChangeState(stateMachine.airborneState);
             return;
         }
-
-        AlignHeading();
     }
 
     public override void Enter()
@@ -105,23 +107,24 @@ public class PlayerState_Grounded : State
         timeSpentCrouched = 0f;
     }
 
-    private void AlignHeading()
+    private void AlignHeadingWithGroundNormal()
     {
+        if (!player.alignWithGroundNormal) return;
+
         Vector3? maybeGroundNormal = player.groundNormalDetector.GetGroundNormal();
-        if (player.velocity.magnitude > 0.01f)
-            if (maybeGroundNormal.HasValue)
-            {
-                Vector3 groundNormal = maybeGroundNormal.Value;
-                //Make sure the velocity is normalized
-                Vector3 vel = player.transform.forward.normalized;
-                //Project the two vectors using the dot product
-                Vector3 forward = vel - groundNormal * Vector3.Dot(vel, groundNormal);
-                //Set the rotation with relative forward and up axes
-                player.transform.rotation = Quaternion.LookRotation(forward.normalized, groundNormal);
-            }
-            else
-            {
-                player.transform.rotation = Quaternion.LookRotation(player.velocity.normalized, Vector3.up);
-            }
+        if (maybeGroundNormal.HasValue)
+        {
+            Vector3 forward = player.transform.forward.normalized;
+            Vector3 newUp = maybeGroundNormal.Value.normalized;
+            Vector3 left = Vector3.Cross(forward, newUp);
+            Vector3 newForward = Vector3.Cross(newUp, left);
+            Quaternion newRotation = Quaternion.LookRotation(newForward, newUp);
+            player.transform.rotation = newRotation;
+        }
+        else
+        {
+            Vector3 velocityParallelToGround = Vector3.ProjectOnPlane(player.velocity, Vector3.up);
+            player.transform.rotation = Quaternion.LookRotation(velocityParallelToGround, Vector3.up);
+        }
     }
 }
