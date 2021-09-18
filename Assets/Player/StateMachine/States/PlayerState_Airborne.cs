@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerState_Airborne : State
 {
+    public const string NAME = "Airborne";
     private Player player;
     private PlayerStateMachine stateMachine;
 
@@ -54,7 +55,7 @@ public class PlayerState_Airborne : State
 
     public override string GetName()
     {
-        return "Airborne";
+        return NAME;
     }
 
     private bool LandingShouldWipeout()

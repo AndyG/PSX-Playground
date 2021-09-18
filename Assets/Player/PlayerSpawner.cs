@@ -5,6 +5,7 @@ using UnityEngine;
 public class PlayerSpawner : MonoBehaviour
 {
     public Player playerPrefab;
+    public PointsTracker pointsTracker;
 
     // Start is called before the first frame update
     void Start()
@@ -31,5 +32,6 @@ public class PlayerSpawner : MonoBehaviour
 
         PlayerDebugUi playerDebugUi = FindObjectOfType<PlayerDebugUi>();
         playerDebugUi.player = spawnedPlayer;
+        pointsTracker.TrackPlayer(spawnedPlayer);
     }
 }

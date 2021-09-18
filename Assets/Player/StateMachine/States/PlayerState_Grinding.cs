@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerState_Grinding : State
 {
+    public const string NAME = "Grinding";
     private Player player;
     private PlayerStateMachine stateMachine;
 
@@ -181,6 +182,6 @@ public class PlayerState_Grinding : State
 
     public override string GetName()
     {
-        return "Grinding";
+        return NAME;
     }
 }

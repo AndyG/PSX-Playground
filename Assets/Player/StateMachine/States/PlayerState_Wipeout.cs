@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerState_Wipeout : State
 {
+    public static string NAME = "Wipeout";
 
     private Player player;
     private PlayerStateMachine stateMachine;
@@ -17,7 +18,7 @@ public class PlayerState_Wipeout : State
 
     public override string GetName()
     {
-        return "Wipeout";
+        return NAME;
     }
 
     public override void Enter()
