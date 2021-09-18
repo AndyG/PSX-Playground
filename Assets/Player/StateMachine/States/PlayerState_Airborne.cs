@@ -17,7 +17,7 @@ public class PlayerState_Airborne : State
 
     public override void Update()
     {
-        if (player.characterController.isGrounded && player.velocity.y <= 0)
+        if (player.playerController.IsGrounded() && player.velocity.y <= 0)
         {
             if (LandingShouldWipeout())
             {
@@ -26,7 +26,7 @@ public class PlayerState_Airborne : State
             }
             else
             {
-                Vector3 velocityRelativeToGround = Vector3.ProjectOnPlane(player.velocity, Vector3.up);
+                Vector3 velocityRelativeToGround = Vector3.ProjectOnPlane(player.velocity, player.playerController.GetGroundNormal().Value);
                 player.transform.LookAt(player.transform.position + velocityRelativeToGround, player.transform.up);
                 stateMachine.ChangeState(stateMachine.groundedState);
                 return;
@@ -50,7 +50,7 @@ public class PlayerState_Airborne : State
 
         // apply gravity
         player.velocity.y -= player.gravity * Time.deltaTime;
-        player.characterController.Move(player.velocity * Time.deltaTime);
+        player.playerController.Move(player.velocity * Time.deltaTime);
     }
 
     public override string GetName()
@@ -60,27 +60,49 @@ public class PlayerState_Airborne : State
 
     private bool LandingShouldWipeout()
     {
-        Vector3 velocityRelativeToGround = Vector3.ProjectOnPlane(player.velocity, Vector3.up);
+        Vector3? groundNormal = player.playerController.GetGroundNormal();
+        if (!groundNormal.HasValue)
+        {
+            return false;
+        }
+
+        Vector3 velocityRelativeToGround = Vector3.ProjectOnPlane(player.velocity, groundNormal.Value);
         if (velocityRelativeToGround.magnitude < 3f)
         {
             return false;
         }
 
-        Quaternion velocityOrientation = Quaternion.LookRotation(velocityRelativeToGround, Vector3.up);
-
-        Quaternion lookAngle = Quaternion.Euler(0, player.transform.rotation.eulerAngles.y, 0);
-        float oppositeLookAngleDeg = lookAngle.eulerAngles.y + 180;
-        if (oppositeLookAngleDeg > 360)
+        // this is hack -- if player is straight up and the ground normal is horizontal-ish, don't wipe out
+        bool isUpright = player.transform.up.y > 0.8f;
+        bool isGroundNormalHorizontal = groundNormal.Value.y < 0.6;
+        if (isUpright && isGroundNormalHorizontal)
         {
-            oppositeLookAngleDeg = oppositeLookAngleDeg - 360;
+            Debug.Log("not wiping out");
+            return false;
+        }
+        else
+        {
+            Debug.Log("was upright: " + isUpright + " ground normal y: " + groundNormal.Value.y);
         }
 
-        Quaternion oppositeLookAngle = Quaternion.Euler(0, oppositeLookAngleDeg, 0);
+        Quaternion velocityOrientation = Quaternion.LookRotation(velocityRelativeToGround, groundNormal.Value);
+        Quaternion playerRotation = player.transform.rotation;
 
-        float angleForward = Mathf.Abs(Quaternion.Angle(lookAngle, velocityOrientation));
-        float angleBackward = Mathf.Abs(Quaternion.Angle(oppositeLookAngle, velocityOrientation));
+        float similarity = Quaternion.Dot(velocityOrientation, playerRotation);
+        float oppositeSimilarity = Quaternion.Dot(velocityOrientation, playerRotation * Quaternion.Euler(0, 180, 0));
+        Debug.Log("checking similarity");
+        return Mathf.Max(Mathf.Abs(similarity), Mathf.Abs(oppositeSimilarity)) < 0.9f;
+        // float oppositeLookAngleDeg = lookAngle.eulerAngles.y + 180;
+        // if (oppositeLookAngleDeg > 360)
+        // {
+        //     oppositeLookAngleDeg = oppositeLookAngleDeg - 360;
+        // }
+        // Quaternion oppositeLookAngle = Quaternion.Euler(0, oppositeLookAngleDeg, 0);
 
-        return angleForward > player.wipeoutAngleThreshold && angleBackward > player.wipeoutAngleThreshold
-        && angleForward < (180 - player.wipeoutAngleThreshold) && angleBackward < (180 - player.wipeoutAngleThreshold);
+        // float angleForward = Mathf.Abs(Quaternion.Angle(lookAngle, velocityOrientation));
+        // float angleBackward = Mathf.Abs(Quaternion.Angle(oppositeLookAngle, velocityOrientation));
+
+        // return angleForward > player.wipeoutAngleThreshold && angleBackward > player.wipeoutAngleThreshold
+        // && angleForward < (180 - player.wipeoutAngleThreshold) && angleBackward < (180 - player.wipeoutAngleThreshold);
     }
 }

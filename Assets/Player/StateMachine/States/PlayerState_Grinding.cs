@@ -83,7 +83,7 @@ public class PlayerState_Grinding : State
 
         if (distanceToMove > distanceToTarget)
         {
-            player.characterController.Move(direction * distanceToTarget);
+            player.playerController.Move(direction * distanceToTarget);
             GrindableGroup group = player.curGrindable.GetGroup();
             if (group == null)
             {
@@ -102,7 +102,7 @@ public class PlayerState_Grinding : State
         }
         else
         {
-            player.characterController.Move(player.velocity * Time.deltaTime);
+            player.playerController.Move(player.velocity * Time.deltaTime);
         }
     }
 

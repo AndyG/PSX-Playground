@@ -14,6 +14,10 @@ public class Player : MonoBehaviour
     public float airborneMovementScalar = 0.3f;
     public int turnRate = 180; // deg/sec
     public int spinRate = 360; // deg/sec
+
+    [SerializeField]
+    public float groundAcceleration = 1f;
+
     [Range(0, 90)]
     public int leaveGrindOllieDegrees = 45;
 
@@ -35,7 +39,7 @@ public class Player : MonoBehaviour
     public PlayerStateMachine stateMachine;
 
     [HideInInspector]
-    public CharacterController characterController;
+    public PlayerController playerController;
 
     [SerializeField]
     private FreeLookUserInput freeLookUserInput;
@@ -61,7 +65,7 @@ public class Player : MonoBehaviour
     void Awake()
     {
         playerInputActions = new PlayerInputActions();
-        characterController = GetComponent<CharacterController>();
+        playerController = GetComponent<PlayerController>();
         stateMachine = new PlayerStateMachine(this);
         groundNormalDetector = GetComponentInChildren<GroundNormalDetector>();
     }

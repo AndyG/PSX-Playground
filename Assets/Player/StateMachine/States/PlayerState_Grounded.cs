@@ -44,14 +44,11 @@ public class PlayerState_Grounded : State
         Vector3 desiredVelocity = player.transform.forward.normalized * player.moveSpeed;
         player.velocity = desiredVelocity;
 
-        player.characterController.Move(player.velocity * Time.deltaTime);
+        player.playerController.Move(player.velocity * Time.deltaTime);
 
         AlignHeadingWithGroundNormal();
 
-        Vector3 groundStickVector = -player.transform.up * 0.01f;
-        player.characterController.Move(groundStickVector);
-
-        if (!player.characterController.isGrounded)
+        if (!player.playerController.IsGrounded() && !player.groundNormalDetector.GetGroundNormal().HasValue)
         {
             stateMachine.ChangeState(stateMachine.airborneState);
             return;
@@ -121,11 +118,6 @@ public class PlayerState_Grounded : State
             Vector3 newForward = Vector3.Cross(newUp, left);
             Quaternion newRotation = Quaternion.LookRotation(newForward, newUp);
             player.transform.rotation = newRotation;
-        }
-        else
-        {
-            Vector3 velocityParallelToGround = Vector3.ProjectOnPlane(player.velocity, Vector3.up);
-            player.transform.rotation = Quaternion.LookRotation(velocityParallelToGround, Vector3.up);
         }
     }
 }
