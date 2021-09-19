@@ -29,12 +29,11 @@ public class PlayerController : MonoBehaviour
     public bool Move(Vector3 movement)
     {
         bool shouldWipeOut = false;
-        Debug.Log("movement y: " + movement.y);
         if (!IsGrounded())
         {
             if (movement.y < 0f)
             {
-                float distanceToGroundWorld = DistanceToGroundWorld(5f);
+                float distanceToGroundWorld = DistanceToGroundWorld(Mathf.Abs(movement.y));
                 if (distanceToGroundWorld != -1 && distanceToGroundWorld < Mathf.Abs(movement.y))
                 {
                     movement.y = -distanceToGroundWorld;
@@ -82,7 +81,8 @@ public class PlayerController : MonoBehaviour
             Vector3? groundNormal = GetGroundNormal();
             if (groundNormal.HasValue)
             {
-                return Vector3.Dot(groundNormal.Value, Vector3.up) != 0;
+                float dotProduct = Vector3.Dot(groundNormal.Value, Vector3.up);
+                return Mathf.Abs(dotProduct) > 0.01;
             }
             else
             {
@@ -95,27 +95,10 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private RaycastHit? CheckGround(Transform groundCheckPosition)
-    {
-        RaycastHit raycastHit;
-        Vector3 direction = -transform.up;
-        Ray ray = new Ray(transform.position, direction);
-        Debug.DrawRay(ray.origin, ray.direction * groundCheckRayDistance, Color.green);
-
-        if (Physics.Raycast(ray, out raycastHit, groundCheckRayDistance, terrainLayerMask))
-        {
-            return raycastHit;
-        }
-        else
-        {
-            return null;
-        }
-    }
-
     public Vector3? GetGroundNormal()
     {
-        Vector3 castOrigin = transform.position;
         float maxDistance = 1.7f;
+        Vector3 castOrigin = transform.position;
         RaycastHit hit;
         if (Physics.Raycast(castOrigin, -transform.up, out hit, maxDistance, terrainLayerMask))
         {
@@ -200,7 +183,8 @@ public class PlayerController : MonoBehaviour
     private bool LandingShouldWipeout(Vector3 movement)
     {
         Vector3? groundNormal = player.playerController.GetGroundNormal();
-        if (!groundNormal.HasValue)
+        float similarityTest = Vector3.Dot(player.transform.up, Vector3.up);
+        if (!groundNormal.HasValue && similarityTest < 0.95)
         {
             return true;
         }

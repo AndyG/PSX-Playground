@@ -31,10 +31,14 @@ public class FollowCamera : MonoBehaviour
     {
         if (follow && player != null)
         {
-            Quaternion playerMovementRotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(player.velocity, Vector3.up), Vector3.up);
-            Vector3 rotatedOffset = playerMovementRotation * offset;
-            Vector3 targetPosition = player.transform.position + rotatedOffset;
-            transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, smoothTime);
+            Vector3 projectedMovement = Vector3.ProjectOnPlane(player.velocity, Vector3.up);
+            if (projectedMovement != Vector3.zero)
+            {
+                Quaternion playerMovementRotation = Quaternion.LookRotation(projectedMovement, Vector3.up);
+                Vector3 rotatedOffset = playerMovementRotation * offset;
+                Vector3 targetPosition = player.transform.position + rotatedOffset;
+                transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, smoothTime);
+            }
         }
 
         if (lookAtTarget != null)

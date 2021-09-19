@@ -30,6 +30,7 @@ public class Player : MonoBehaviour
     [Header("Movement State")]
     [SerializeField]
     public Vector3 velocity = new Vector3(0, 0, 0);
+    public bool didLeaveVert = false;
 
     public PlayerInputActions playerInputActions;
     [HideInInspector]
