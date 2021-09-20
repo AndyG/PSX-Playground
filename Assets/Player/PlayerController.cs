@@ -9,11 +9,6 @@ public class PlayerController : MonoBehaviour
     public float groundCheckRayDistance = 0.5f;
     public LayerMask terrainLayerMask;
 
-    public Transform groundCheckerFront;
-    public Transform groundCheckerBack;
-
-    public Transform groundCheckerSphere;
-
     private Player player;
     private Collider playerCollider;
 
@@ -200,12 +195,7 @@ public class PlayerController : MonoBehaviour
         bool isGroundNormalHorizontal = groundNormal.Value.y < 0.6;
         if (isUpright && isGroundNormalHorizontal)
         {
-            Debug.Log("not wiping out");
             return false;
-        }
-        else
-        {
-            Debug.Log("was upright: " + isUpright + " ground normal y: " + groundNormal.Value.y);
         }
 
         Quaternion velocityOrientation = Quaternion.LookRotation(velocityRelativeToGround, groundNormal.Value);
@@ -213,7 +203,6 @@ public class PlayerController : MonoBehaviour
 
         float similarity = Quaternion.Dot(velocityOrientation, playerRotation);
         float oppositeSimilarity = Quaternion.Dot(velocityOrientation, playerRotation * Quaternion.Euler(0, 180, 0));
-        Debug.Log("checking similarity");
         return Mathf.Max(Mathf.Abs(similarity), Mathf.Abs(oppositeSimilarity)) < 0.9f;
     }
 }

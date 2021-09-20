@@ -10,6 +10,8 @@ public class PlayerState_Wipeout : State
     private Player player;
     private PlayerStateMachine stateMachine;
 
+    bool didReset = false;
+
     public PlayerState_Wipeout(PlayerStateMachine stateMachine)
     {
         this.stateMachine = stateMachine;
@@ -36,7 +38,6 @@ public class PlayerState_Wipeout : State
         headRigidBody.AddForce(player.velocity, ForceMode.VelocityChange);
         bodyRigidBody.AddForce(player.velocity, ForceMode.VelocityChange);
 
-
         FollowCamera followCamera = GameObject.FindObjectOfType<FollowCamera>();
         followCamera.follow = false;
         followCamera.lookAtTarget = player.head.transform;
@@ -49,6 +50,7 @@ public class PlayerState_Wipeout : State
 
     private void DoReset(InputAction.CallbackContext context)
     {
+        Debug.Log("spawn player");
         PlayerSpawner spawner = GameObject.FindObjectOfType<PlayerSpawner>();
         spawner.transform.position = player.transform.position + Vector3.up * 5f;
         Vector3 playerWorldVelocity = player.velocity;
@@ -56,7 +58,6 @@ public class PlayerState_Wipeout : State
         Quaternion targetRotation = Quaternion.LookRotation(parallelToGroundVelocity, Vector3.up);
         spawner.transform.rotation = targetRotation;
         spawner.SpawnPlayer();
-
         player.gameObject.SetActive(false);
     }
 }

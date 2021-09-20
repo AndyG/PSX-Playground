@@ -41,8 +41,23 @@ public class PlayerState_Grounded : State
             return;
         }
 
-        float speed = isCrouched ? player.crouchedSpeed : player.moveSpeed;
-        Vector3 desiredVelocity = player.transform.forward.normalized * speed;
+        float targetSpeed = isCrouched ? player.coalesceSpeedCrouching : player.coalesceSpeedStanding;
+        float acceleration = isCrouched ? player.groundAccelerationCrouching : player.groundAccelerationStanding;
+        float curSpeed = player.velocity.magnitude;
+        float newSpeed;
+        if (curSpeed > targetSpeed)
+        {
+            float frictionEffect = isCrouched ? player.frictionEffectCrouching : player.frictionEffectStanding;
+            newSpeed = curSpeed + (frictionEffect * Time.deltaTime);
+        }
+        else
+        {
+            newSpeed = Mathf.Min(curSpeed + acceleration * Time.deltaTime, targetSpeed);
+        }
+
+        newSpeed = Mathf.Clamp(newSpeed, player.minSpeed, player.maxSpeed);
+
+        Vector3 desiredVelocity = player.transform.forward * newSpeed;
         player.velocity = desiredVelocity;
 
         player.playerController.Move(player.velocity * Time.deltaTime);
@@ -96,7 +111,7 @@ public class PlayerState_Grounded : State
     private void OnCrouchRelease(InputAction.CallbackContext context)
     {
         float fraction = Mathf.Min(timeSpentCrouched / player.timeToMaxJump, 1f);
-        player.velocity.y = Mathf.Max(player.minJumpForce, player.maxJumpForce * fraction);
+        player.velocity.y += Mathf.Max(player.minJumpForce, player.maxJumpForce * fraction);
         stateMachine.ChangeState(stateMachine.airborneState);
     }
 

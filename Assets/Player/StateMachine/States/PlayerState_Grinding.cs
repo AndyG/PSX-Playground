@@ -50,6 +50,10 @@ public class PlayerState_Grinding : State
             target = grindable.pointA.transform;
         }
 
+        player.transform.up = Vector3.up;
+        player.transform.LookAt(target, Vector3.up);
+        player.transform.eulerAngles = new Vector3(0f, player.transform.eulerAngles.y, 0f);
+
         EnableJumpInput();
     }
 
@@ -76,10 +80,10 @@ public class PlayerState_Grinding : State
 
         Vector3 direction = (target.position - player.grindableDetector.transform.position).normalized;
 
-        float distanceToMove = (direction * player.moveSpeed * Time.deltaTime).magnitude;
+        float distanceToMove = (direction * player.grindSpeed * Time.deltaTime).magnitude;
         float distanceToTarget = Vector3.Distance(target.position, player.grindableDetector.transform.position);
 
-        player.velocity = direction * player.moveSpeed;
+        player.velocity = direction * player.grindSpeed;
 
         if (distanceToMove > distanceToTarget)
         {
@@ -87,6 +91,7 @@ public class PlayerState_Grinding : State
             GrindableGroup group = player.curGrindable.GetGroup();
             if (group == null)
             {
+                Debug.Log("end grind");
                 EndGrind();
                 return;
             }
@@ -133,7 +138,7 @@ public class PlayerState_Grinding : State
         float jumpHeldFraction = Mathf.Min(timeSpentCrouched / player.timeToMaxJump, 1f);
         float verticalVelocityForJump = player.velocity.y + Mathf.Max(player.minJumpForce, player.maxJumpForce * jumpHeldFraction);
 
-        player.velocity = new Vector3(newHeading.x, 0, newHeading.z) * player.moveSpeed + Vector3.up * verticalVelocityForJump;
+        player.velocity = new Vector3(newHeading.x, 0, newHeading.z) * player.grindSpeed + Vector3.up * verticalVelocityForJump;
         stateMachine.ChangeState(stateMachine.airborneState);
     }
 
@@ -165,6 +170,7 @@ public class PlayerState_Grinding : State
 
     private void EndGrind()
     {
+        player.grindDisableTime = Time.time;
         stateMachine.ChangeState(stateMachine.airborneState);
     }
 

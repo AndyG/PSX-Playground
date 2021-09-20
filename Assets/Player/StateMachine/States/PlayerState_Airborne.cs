@@ -26,14 +26,27 @@ public class PlayerState_Airborne : State
             }
             else
             {
+                Vector3 groundNormal = player.playerController.GetGroundNormal().Value;
                 Vector3 velocityRelativeToGround = Vector3.ProjectOnPlane(player.velocity, player.playerController.GetGroundNormal().Value);
-                player.transform.LookAt(player.transform.position + velocityRelativeToGround, player.transform.up);
+                if (velocityRelativeToGround.magnitude > 0.1)
+                {
+                    player.transform.LookAt(player.transform.position + velocityRelativeToGround, player.transform.up);
+                }
+
                 stateMachine.ChangeState(stateMachine.groundedState);
+                bool isVert = Mathf.Abs(Vector3.Dot(groundNormal, Vector3.up)) < 0.3;
+                if (isVert)
+                {
+                    float curSpeed = player.velocity.magnitude;
+                    float newSpeed = curSpeed + player.vertLandingSpeedBoost;
+                    player.velocity = player.velocity.normalized * newSpeed;
+                }
                 return;
             }
         }
 
-        if (player.playerInputActions.Player.Grind.IsPressed())
+        bool canGrind = (Time.time - player.grindDisableTime) > 0.1f;
+        if (canGrind && player.playerInputActions.Player.Grind.IsPressed())
         {
             Grindable grindable = player.grindableDetector.GetGrindable();
             if (grindable != null)
@@ -95,7 +108,6 @@ public class PlayerState_Airborne : State
 
         float similarity = Quaternion.Dot(velocityOrientation, playerRotation);
         float oppositeSimilarity = Quaternion.Dot(velocityOrientation, playerRotation * Quaternion.Euler(0, 180, 0));
-        Debug.Log("checking similarity");
         return Mathf.Max(Mathf.Abs(similarity), Mathf.Abs(oppositeSimilarity)) < 0.9f;
     }
 }

@@ -6,18 +6,25 @@ using UnityEngine.InputSystem;
 public class Player : MonoBehaviour
 {
     [Header("Movement")]
-    public float moveSpeed = 5f;
-    public float crouchedSpeed = 10f;
+    public float minSpeed = 5f;
+    public float maxSpeed = 150f;
+    public float coalesceSpeedStanding = 15f;
+    public float coalesceSpeedCrouching = 30f;
     public float gravity = 0.1f;
     public float minJumpForce = 3f;
     public float maxJumpForce = 10f;
     public float timeToMaxJump = 1f;
     public float airborneMovementScalar = 0.3f;
-    public int turnRate = 180; // deg/sec
+    public int turnRate = 150; // deg/sec
     public int spinRate = 360; // deg/sec
-
-    [SerializeField]
-    public float groundAcceleration = 1f;
+    public float groundAccelerationStanding = 5f;
+    public float groundAccelerationCrouching = 10f;
+    [Range(-30f, 0f)]
+    public float frictionEffectCrouching = -8f;
+    [Range(-30f, 0f)]
+    public float frictionEffectStanding = -16f;
+    public float grindSpeed = 50f;
+    public float vertLandingSpeedBoost = 100f;
 
     [Range(0, 90)]
     public int leaveGrindOllieDegrees = 45;
@@ -30,7 +37,7 @@ public class Player : MonoBehaviour
     [Header("Movement State")]
     [SerializeField]
     public Vector3 velocity = new Vector3(0, 0, 0);
-    public bool didLeaveVert = false;
+    public float grindDisableTime = -1;
 
     public PlayerInputActions playerInputActions;
     [HideInInspector]
@@ -98,9 +105,11 @@ public class Player : MonoBehaviour
         stateMachine.Update();
     }
 
-    void OnGUI()
+    private void OnGUI()
     {
-        stateMachine.OnGUI();
+        float speed = velocity.magnitude;
+        string content = "Speed: " + speed;
+        GUILayout.Label($"<color='white'><size=40>{content}</size></color>");
     }
 
     public void LookAtDirection(Vector3 direction, bool parallelToGround = true)

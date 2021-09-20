@@ -272,36 +272,6 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!1 &267498540398853574
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8274771391987550332}
-  m_Layer: 0
-  m_Name: GroundCheckerSphere
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8274771391987550332
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 267498540398853574}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 6632585279661190138}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &414632816890249888
 GameObject:
   m_ObjectHideFlags: 0
@@ -314,7 +284,7 @@ GameObject:
   - component: {fileID: 6548491697097380094}
   - component: {fileID: 3719721470084691110}
   m_Layer: 3
-  m_Name: Cube
+  m_Name: Board
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -463,7 +433,6 @@ Transform:
   - {fileID: 618181864}
   - {fileID: 346661449205724073}
   - {fileID: 5240114936831726443}
-  - {fileID: 8274771391987550332}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -479,20 +448,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4bf013cdc3f25d4b8d6191fcfa84216, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 30
-  crouchedSpeed: 50
-  gravity: 75
-  minJumpForce: 40
-  maxJumpForce: 65
+  minSpeed: 10
+  maxSpeed: 90
+  coalesceSpeedStanding: 27
+  coalesceSpeedCrouching: 45
+  gravity: 85
+  minJumpForce: 15
+  maxJumpForce: 30
   timeToMaxJump: 0.15
   airborneMovementScalar: 1
   turnRate: 210
   spinRate: 540
-  groundAcceleration: 70
+  groundAccelerationStanding: 15
+  groundAccelerationCrouching: 30
+  frictionEffectCrouching: -16.06
+  frictionEffectStanding: -24.64
+  grindSpeed: 50
+  vertLandingSpeedBoost: 10
   leaveGrindOllieDegrees: 45
   alignWithGroundNormal: 1
   wipeoutAngleThreshold: 45
   velocity: {x: 0, y: 0, z: 0}
+  grindDisableTime: -1
   movement:
     m_Name: Movement
     m_Type: 1
@@ -537,9 +514,6 @@ MonoBehaviour:
   terrainLayerMask:
     serializedVersion: 2
     m_Bits: 1
-  groundCheckerFront: {fileID: 5240114936831726443}
-  groundCheckerBack: {fileID: 0}
-  groundCheckerSphere: {fileID: 8274771391987550332}
 --- !u!136 &2107783787881275162
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -592,7 +566,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8614568979485494549}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f8a792b135d88fe41b6b942848478a35, type: 3}
   m_Name: 

@@ -12,7 +12,6 @@ public class Grindable : MonoBehaviour
 
     public GrindableGroup GetGroup()
     {
-        GrindableGroup group = transform.parent.GetComponent<GrindableGroup>();
-        return group;
+        return transform.GetComponentInParent<GrindableGroup>();
     }
 }
